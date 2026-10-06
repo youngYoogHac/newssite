@@ -1,13 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Главная — NewsSite')
+@section('title', 'Категория: ' . $category)
 
 @section('content')
     <section class="container">
-        <h1 class="page-title">Последние новости</h1>
+        <a class="back-link" href="/catalog">← Все категории</a>
+        <h1 class="page-title">Новости категории «{{ $category }}»</h1>
 
         @if ($news->isEmpty())
-            <p>Новостей пока нет</p>
+            <p>В этой категории пока нет новостей.</p>
         @else
             <div class="news-grid">
                 @foreach ($news as $item)
