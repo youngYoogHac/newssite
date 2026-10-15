@@ -21,18 +21,26 @@
 
             <form class="news-form" action="{{ route('login') }}" method="POST">
                 @csrf
+
+                {{-- Логин --}}
                 <div class="form-group">
-                    <label for="username">Логин</label>
-                    <input id="username" name="username" type="text" value="{{ old('username') }}" required autofocus>
+                    <label for="login">Логин</label>
+                    <input id="login" name="login" type="text"
+                           value="{{ old('login') }}" required autofocus>
                 </div>
+
+                {{-- Пароль --}}
                 <div class="form-group">
                     <label for="password">Пароль</label>
                     <input id="password" name="password" type="password" required>
                 </div>
+
                 <button class="btn" type="submit">Войти</button>
             </form>
 
-            <p class="form-note">Нет аккаунта? <a class="text-link" href="{{ route('register') }}">Зарегистрироваться</a></p>
+            <p class="form-note">
+                Нет аккаунта? <a class="text-link" href="{{ route('register') }}">Зарегистрироваться</a>
+            </p>
         </div>
     </section>
 @endsection

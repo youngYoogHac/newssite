@@ -10,8 +10,12 @@ class JournalistMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth()->check() || ! in_array(auth()->user()->role, ['journalist', 'admin'], true)) {
-            return redirect()->route('main')->with('error', 'Нужны права журналиста.');
+        $user = auth()->user();
+
+        if (! $user || ! in_array($user->role?->name, ['journalist', 'admin'], true)) {
+            return redirect()
+                ->route('main')
+                ->with('error', 'Нужны права журналиста.');
         }
 
         return $next($request);

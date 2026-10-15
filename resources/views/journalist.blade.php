@@ -23,22 +23,27 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="title">Заголовок</label>
-                    <input id="title" name="title" type="text" value="{{ old('title') }}" required maxlength="255">
+                    <label for="heading">Заголовок</label>
+                    <input id="heading" name="heading" type="text"
+                           value="{{ old('heading') }}" required maxlength="255">
                 </div>
 
                 <div class="form-group">
-                    <label for="category">Категория</label>
-                    <select id="category" name="category" required>
-                        @foreach (['Технологии', 'Программирование', 'Наука', 'Спорт', 'Мир', 'Экономика'] as $cat)
-                            <option value="{{ $cat }}" @selected(old('category') === $cat)>{{ $cat }}</option>
+                    <label for="category_id">Категория</label>
+                    <select id="category_id" name="category_id" required>
+                        <option value="">Выберите категорию</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}"
+                                    @selected(old('category_id') == $category->id)>
+                                {{ $category->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="content">Текст статьи</label>
-                    <textarea id="content" name="content" rows="12" required>{{ old('content') }}</textarea>
+                    <label for="text">Текст статьи</label>
+                    <textarea id="text" name="text" rows="12" required>{{ old('text') }}</textarea>
                 </div>
 
                 <button class="btn" type="submit">Опубликовать</button>

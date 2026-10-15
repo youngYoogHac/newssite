@@ -10,8 +10,12 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth()->check() || auth()->user()->role !== 'admin') {
-            return redirect()->route('main')->with('error', 'Доступ только для администраторов.');
+        $user = auth()->user();
+
+        if (! $user || $user->role?->name !== 'admin') {
+            return redirect()
+                ->route('main')
+                ->with('error', 'Доступ только для администраторов.');
         }
 
         return $next($request);

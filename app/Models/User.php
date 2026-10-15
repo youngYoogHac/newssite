@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -9,7 +11,7 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $fillable = ['username', 'password', 'role'];
+    protected $fillable = ['name', 'login', 'password', 'role_id'];
 
     protected $hidden = ['password', 'remember_token'];
 
@@ -20,8 +22,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function news(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function role(): BelongsTo
     {
-        return $this->hasMany(News::class);
+        return $this->belongsTo(Role::class);
+    }
+
+    public function texts(): HasMany
+    {
+        return $this->hasMany(Text::class);
     }
 }

@@ -6,12 +6,12 @@
     <section class="container">
         <h1 class="page-title">Последние новости</h1>
 
-        @if ($news->isEmpty())
+        @if ($texts->isEmpty())
             <p>Новостей пока нет</p>
         @else
             <div class="news-grid">
-                @foreach ($news as $item)
-                    <x-news-card :item="$item" />
+                @foreach ($texts as $text)
+                    <x-news-card :item="$text" />
                 @endforeach
             </div>
         @endif

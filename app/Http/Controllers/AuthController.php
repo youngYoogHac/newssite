@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,18 +19,19 @@ class AuthController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'username' => 'required|string',
+            'login'    => 'required|string',
             'password' => 'required|string',
         ]);
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+
             return redirect()->route('main')->with('success', 'Вы вошли в систему.');
         }
 
         return back()
-            ->withErrors(['username' => 'Неверный логин или пароль.'])
-            ->withInput($request->only('username'));
+            ->withErrors(['login' => 'Неверный логин или пароль.'])
+            ->withInput($request->only('login'));
     }
 
     public function showRegister(): View
@@ -40,14 +42,18 @@ class AuthController extends Controller
     public function register(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'username' => 'required|string|max:255|unique:users,username',
+            'name'     => 'required|string|max:255',
+            'login'    => 'required|string|max:255|unique:users,login',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
+        $userRole = Role::query()->where('name', 'user')->firstOrFail();
+
         $user = User::create([
-            'username' => $validated['username'],
-            'password' => $validated['password'],   // каст 'hashed' захеширует
-            'role'     => 'user',
+            'name'     => $validated['name'],
+            'login'    => $validated['login'],
+            'password' => $validated['password'],
+            'role_id'  => $userRole->id,
         ]);
 
         Auth::login($user);

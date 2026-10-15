@@ -1,21 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'Новость — NewsSite')
+@section('title', $text ? $text->heading . ' — NewsSite' : 'Новость — NewsSite')
 
 @section('content')
     <section class="container narrow-container">
-        <a class="back-link" href="/">← Все новости</a>
+        <a class="back-link" href="{{ route('main') }}">← Все новости</a>
 
-        @if ($news)
+        @if ($text)
             <article class="article">
                 <div class="article-meta">
-                    <span class="news-category">{{ $news->category }}</span>
-                    <time datetime="{{ $news->created_at->toISOString() }}">
-                        {{ $news->created_at->format('d.m.Y H:i') }}
+                    <span class="news-category">{{ $text->category->name }}</span>
+                    <span>Автор: {{ $text->user?->login ?? 'Аноним' }}</span>
+                    <time datetime="{{ $text->created_at->toISOString() }}">
+                        {{ $text->created_at->format('d.m.Y H:i') }}
                     </time>
                 </div>
-                <h1 class="article-title">{{ $news->title }}</h1>
-                <div class="article-content">{!! nl2br(e($news->content)) !!}</div>
+                <h1 class="article-title">{{ $text->heading }}</h1>
+                <div class="article-content">{!! nl2br(e($text->text)) !!}</div>
             </article>
 
             <a class="btn btn-secondary" href="{{ route('main') }}">Вернуться к новостям</a>

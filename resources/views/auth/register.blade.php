@@ -22,13 +22,20 @@
             <form class="news-form" action="{{ route('register') }}" method="POST">
                 @csrf
                 <div class="form-group">
-                    <label for="username">Логин</label>
-                    <input id="username" name="username" type="text" value="{{ old('username') }}" required autofocus>
+                    <label for="name">Имя</label>
+                    <input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus>
                 </div>
+
+                <div class="form-group">
+                    <label for="login">Логин</label>
+                    <input id="login" name="login" type="text" value="{{ old('login') }}" required>
+                </div>
+
                 <div class="form-group">
                     <label for="password">Пароль</label>
                     <input id="password" name="password" type="password" required minlength="6">
                 </div>
+
                 <div class="form-group">
                     <label for="password_confirmation">Повторите пароль</label>
                     <input id="password_confirmation" name="password_confirmation" type="password" required minlength="6">

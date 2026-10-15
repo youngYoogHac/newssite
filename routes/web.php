@@ -10,21 +10,34 @@ Route::get('/catalog/{category}', [SiteController::class, 'catalogCategory'])->n
 Route::get('/news/{id}', [SiteController::class, 'show'])->name('news.show');
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+
+    Route::get('/login',     [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login',    [AuthController::class, 'login']);
+    Route::get('/register',  [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+
 });
 
 Route::middleware('auth')->group(function () {
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware('journalist')->group(function () {
+
         Route::get('/journalist', [SiteController::class, 'journalist'])->name('journalist');
         Route::post('/news', [SiteController::class, 'store'])->name('news.store');
+        Route::get('/news/{id}/edit', [SiteController::class, 'edit'])->name('news.edit');
+        Route::put('/news/{id}', [SiteController::class, 'update'])->name('news.update');
+
     });
 
     Route::middleware('admin')->group(function () {
+
         Route::get('/admin', [SiteController::class, 'admin'])->name('admin');
+        Route::post('/admin/user/role', [SiteController::class, 'updateUserRole'])
+            ->name('admin.user.role');
+        Route::delete('/news/{id}', [SiteController::class, 'destroyText'])
+            ->name('news.destroy');
+            
     });
 });
