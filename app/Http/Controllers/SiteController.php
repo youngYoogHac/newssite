@@ -14,7 +14,11 @@ class SiteController extends Controller
 {
     public function main(): View
     {
-        $texts = Text::with(['user', 'category'])->latest()->get();
+        $texts = Text::query()
+            ->where('is_blocked', false)
+            ->with(['user', 'category.parent'])
+            ->latest()
+            ->get();
         return view('main', compact('texts'));
     }
 
@@ -25,29 +29,44 @@ class SiteController extends Controller
         return view('catalog', compact('categories'));
     }
 
-    public function catalogCategory($category): View
+    public function catalogCategory($categoryName): View
     {
+        $category = Category::query()
+            ->with('children')
+            ->where('name', $categoryName)
+            ->firstOrFail();
+
+        $categoryIds = collect([$category->id])->merge($category->children->pluck('id'));
+
         $texts = Text::query()
-            ->whereHas('category', fn ($q) => $q->where('name', $category))
-            ->with(['user', 'category'])
+            ->where('is_blocked', false)
+            ->whereIn('category_id', $categoryIds)
+            ->with(['user', 'category.parent'])
             ->latest()
             ->get();
         
-        return view('catalogCategory', compact('texts', 'category'));
+        return view('catalogCategory', compact('texts', 'categoryName'));
     }
 
     public function show($id): View
     {
         $text = Text::query()
-            ->with(['user', 'category'])
+            ->with(['user', 'category.parent'])
             ->find($id);
+
+        if ($text && $text->is_blocked && auth()->user()?->role?->name !== 'admin') {
+            $text = null;
+        }
 
         return view('show', compact('text'));
     }
 
     public function journalist(): View
     {
-        $categories = Category::query()->orderBy('name')->get();
+        $categories = Category::with('children')
+            ->whereNull('parent_id')
+            ->orderBy('name')
+            ->get();
 
         return view('journalist', compact('categories'));
     }
@@ -57,7 +76,7 @@ class SiteController extends Controller
         $validated = $request->validate([
             'heading'    => 'required|string|max:255',
             'text'  => 'required|string',
-            'category_id' => 'required|string|exists:categories,id',
+            'category_id' => 'required|integer|exists:categories,id',
         ]);
 
         $validated['user_id'] = auth()->id();
@@ -71,20 +90,35 @@ class SiteController extends Controller
     public function edit($id) : View
     {
         $text = Text::findOrFail($id);
-        $categories = Category::query()->orderBy('name')->get();
+
+        if ($text->user_id !== auth()->id() && auth()->user()->role?->name !== 'admin') {
+            abort(403, 'Вы можете редактировать только свои статьи.');
+        }
+
+        $categories = Category::with('children')
+            ->whereNull('parent_id')
+            ->orderBy('name')
+            ->get();
 
         return view('edit', compact('text','categories'));
     }
 
     public function update(Request $request, $id): RedirectResponse
     {
+        
+
+        $text = Text::findOrFail($id);
+
+        if ($text->user_id !== auth()->id() && auth()->user()->role?->name !== 'admin') {
+            abort(403, 'Вы можете редактировать только свои статьи.');
+        }
+
         $validated = $request->validate([
             'heading'     => 'required|string|max:255',
             'text'        => 'required|string',
             'category_id' => 'required|integer|exists:categories,id',
         ]);
 
-        $text = Text::findOrFail($id);
         $text->update($validated);
 
         return redirect()
@@ -96,7 +130,7 @@ class SiteController extends Controller
     {
         $users = User::query()->with('role')->orderBy('login')->get();
         $roles = Role::query()->orderBy('name')->get();
-        $texts = Text::query()->with(['user', 'category'])->latest()->get();
+        $texts = Text::query()->with(['user', 'category.parent'])->latest()->get();
 
         return view('admin', compact('users', 'roles', 'texts'));
     }
@@ -125,5 +159,14 @@ class SiteController extends Controller
         Text::findOrFail($id)->delete();
 
         return back()->with('success', 'Текст удалён.');
+    }
+
+    public function toggleTextBlock($id): RedirectResponse
+    {
+        $text = Text::findOrFail($id);
+        $text->update(['is_blocked'=> ! $text->is_blocked]);
+
+        $status = $text->is_blocked ? 'Статья заблокирована.' : 'Статья разблокирована.';
+        return back()->with('success', $status);
     }
 }

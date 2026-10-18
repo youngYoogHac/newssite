@@ -10,22 +10,27 @@
             <p>Категорий пока нет.</p>
         @else
             <div class="category-grid">
-                @foreach ($categories as $category)
-                    @php
-                        $icons = [
-                            'Технологии'       => '💻',
-                            'Программирование' => '👨‍💻',
-                            'Наука'            => '🔬',
-                            'Спорт'            => '🏆',
-                            'Мир'              => '🌍',
-                            'Экономика'        => '📈',
-                        ];
-                    @endphp
-                    <a class="category-card" href="{{ route('catalog.category', $category->name) }}">
-                        <span class="category-icon">{{ $icons[$category->name] ?? '📰' }}</span>
-                        <span class="category-name">{{ $category->name }}</span>
-                        <span class="category-description">Статьи категории «{{ $category->name }}».</span>
-                    </a>
+                {{-- Перебираем ТОЛЬКО родительские категории --}}
+                @foreach ($categories->whereNull('parent_id') as $parent)
+                    <article class="category-card">
+                        {{-- Заголовок родительской категории (ссылка на её статьи) --}}
+                        <a href="{{ route('catalog.category', $parent->name) }}" class="category-parent-link">
+                            <span class="category-name">{{ $parent->name }}</span>
+                        </a>
+
+                        {{-- Список подкатегорий --}}
+                        @if ($parent->children->isNotEmpty())
+                            <ul class="subcategory-list">
+                                @foreach ($parent->children as $child)
+                                    <li>
+                                        <a href="{{ route('catalog.category', $child->name) }}">
+                                            {{ $child->name }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </article>
                 @endforeach
             </div>
         @endif

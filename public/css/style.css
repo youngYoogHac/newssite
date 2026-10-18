@@ -617,3 +617,56 @@ button, input, select, textarea { font: inherit; }
     font-size: .9rem;
     text-align: center;
 }
+
+/* Стили для родительской категории */
+.category-parent-link {
+    display: block;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 8px;
+    transition: color 0.2s;
+}
+
+.category-parent-link:hover .category-name {
+    color: var(--accent);
+}
+
+/* Стили для списка подкатегорий */
+.subcategory-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.subcategory-list li a {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.subcategory-list li a:hover {
+    color: var(--text);
+    transform: translateX(4px); /* Небольшой сдвиг вправо при наведении */
+}
+
+.btn-warning { background: #d97706; color: #fff; }
+.btn-warning:hover { background: #b45309; }
+.btn-success { background: #059669; color: #fff; }
+.btn-success:hover { background: #047857; }
+
+.badge-blocked {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #fef2f2;
+    color: #991b1b;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #fecaca;
+    margin-left: 8px;
+}

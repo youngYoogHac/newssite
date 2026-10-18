@@ -32,11 +32,18 @@
                     <label for="category_id">Категория</label>
                     <select id="category_id" name="category_id" required>
                         <option value="">Выберите категорию</option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}"
-                                    @selected(old('category_id') == $category->id)>
-                                {{ $category->name }}
-                            </option>
+                        
+                        @foreach ($categories as $parent)
+                            <optgroup label="{{ $parent->name }}">
+                                <option value="{{ $parent->id }}" @selected(old('category_id') == $parent->id)>
+                                    {{ $parent->name }} (Общая)
+                                </option>
+                                @foreach ($parent->children as $child)
+                                    <option value="{{ $child->id }}" @selected(old('category_id') == $child->id)>
+                                        — {{ $child->name }}
+                                    </option>
+                                @endforeach
+                            </optgroup>
                         @endforeach
                     </select>
                 </div>

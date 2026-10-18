@@ -3,11 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    protected $fillable = ['title', 'content', 'category', 'user_id'];
+    protected $fillable = ['name', 'parent_id'];
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(Category::class,'parent_id');
+    }
+
+    public function fullName(): string
+    {
+        if ($this->parent) {
+            return $this->parent->name . ' / ' . $this->name;
+        }
+
+        return $this->name;
+    }
 
     public function texts(): HasMany
     {

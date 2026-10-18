@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
             ->name('admin.user.role');
         Route::delete('/news/{id}', [SiteController::class, 'destroyText'])
             ->name('news.destroy');
+        Route::post('/admin/text/{id}/toggle-block', [SiteController::class, 'toggleTextBlock'])
+            ->name('admin.text.toggle-block');
             
     });
 });

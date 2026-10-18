@@ -9,17 +9,27 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        $names = [
-            'Технологии',
-            'Программирование',
-            'Наука',
-            'Спорт',
-            'Мир',
-            'Экономика',
+        $tree = [
+            'Технологии' => ['Искусственный интеллект', 'Гаджеты', 'Кибербезопасность'],
+            'Программирование' => ['Веб-разработка', 'Мобильная разработка', 'Базы данных'],
+            'Наука' => ['Космос', 'Медицина', 'Физика'],
+            'Спорт' => ['Футбол', 'Баскетбол', 'Олимпийские игры'],
+            'Мир' => ['Политика', 'Происшествия', 'Экология'],
+            'Экономика' => ['Финансы', 'Бизнес', 'Криптовалюты'],
         ];
 
-        foreach ($names as $name) {
-            Category::updateOrCreate(['name' => $name]);
+        foreach ($tree as $parentName => $child) {
+            $parent = Category::updateOrCreate(
+                ['name'=> $parentName],
+                ['parent_id' => null]
+            );
+
+            foreach ($child as $childName) {
+                $child = Category::updateOrCreate(
+                    ['name'=> $childName],
+                    ['parent_id'=> $parent->id]
+                );
+            }
         }
     }
 }

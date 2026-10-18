@@ -60,13 +60,25 @@
             <tbody>
                 @foreach ($texts as $text)
                     <tr>
-                        <td>{{ $text->heading }}</td>
-                        <td>{{ $text->category->name }}</td>
+                        <td>
+                            {{ $text->heading }}
+                            @if ($text->is_blocked)
+                                <span class="badge-blocked">Заблокировано</span>
+                            @endif
+                        </td>
+                        <td>{{ $text->category->fullName() }}</td>
                         <td>{{ $text->user?->login ?? 'Аноним' }}</td>
                         <td>{{ $text->created_at->format('d.m.Y') }}</td>
                         <td>
                             <a href="{{ route('news.edit', $text->id) }}"
                                class="btn btn-small btn-secondary">Редактировать</a>
+
+                            <form action="{{ route('admin.text.toggle-block', $text->id) }}" method="POST" style="display:inline">
+                                @csrf
+                                <button type="submit" class="btn btn-small {{ $text->is_blocked ? 'btn-success' : 'btn-warning' }}">
+                                    {{ $text->is_blocked ? 'Разблокировать' : 'Заблокировать' }}
+                                </button>
+                            </form>
 
                             <form action="{{ route('news.destroy', $text->id) }}"
                                   method="POST"

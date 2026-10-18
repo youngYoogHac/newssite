@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Категория: ' . $category)
+@section('title', 'Категория: ' . $categoryName)
 
 @section('content')
     <section class="container">
         <a class="back-link" href="{{ route('catalog') }}">← Все категории</a>
-        <h1 class="page-title">Новости категории «{{ $category }}»</h1>
+        <h1 class="page-title">Новости категории «{{ $categoryName }}»</h1>
 
         @if ($texts->isEmpty())
             <p>В этой категории пока нет новостей.</p>
